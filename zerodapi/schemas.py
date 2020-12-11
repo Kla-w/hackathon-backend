@@ -1,6 +1,9 @@
 from typing import List, Optional
+
+from fastapi_users import models
 from pydantic import BaseModel
 from pydantic.schema import datetime
+
 
 ##############################################
 
@@ -43,6 +46,24 @@ from pydantic.schema import datetime
 #################################################
 
 
+class User(models.BaseUser):
+    pass
+
+
+class UserCreate(models.BaseUserCreate):
+    pass
+
+
+class UserUpdate(User, models.BaseUserUpdate):
+    pass
+
+
+class UserDB(User, models.BaseUserDB):
+    pass
+
+#################################################
+
+
 # class PhotoBase(BaseModel):
 #     path: str
 #
@@ -76,6 +97,7 @@ class District(DistrictBase):
     class Config:
         orm_mode = True
 
+
 #################################################
 
 
@@ -93,6 +115,7 @@ class Tag(TagBase):
     class Config:
         orm_mode = True
 
+
 #################################################
 
 
@@ -105,7 +128,7 @@ class ProductBase(BaseModel):
     # aisles = Aisle
     # photo: List[Photo] = []
     photo: str
-    tags: List[Tag] = []
+    tags: List[Tag]
 
 
 class ProductCreate(ProductBase):
@@ -125,7 +148,7 @@ class Product(ProductBase):
 class AisleBase(BaseModel):
     title: str
     active: bool
-    products: List[Product] = []
+    # products: List[Product] = []
     # photos_id: List[Photo] = []
     photo: str
 
@@ -136,9 +159,11 @@ class AisleCreate(AisleBase):
 
 class Aisle(AisleBase):
     id: int
+    products: Optional[List[Product]] = None
 
     class Config:
         orm_mode = True
+
 
 #################################################
 
@@ -150,6 +175,7 @@ class MarketBase(BaseModel):
     location: List[District] = []
     # shops: List[Shop] = []
 
+
 class MarketCreate(MarketBase):
     pass
 
@@ -160,28 +186,32 @@ class Market(MarketBase):
     class Config:
         orm_mode = True
 
+
 #################################################
 
 
 class ShopBase(BaseModel):
     name: str
     description: str
-    # markets: Optional[List[Market]] = []
     # photos: Optional[List[Photo]] = []
-    photo: str
-    type: str
+    shopType: str
+    photo: Optional[str] = None
 
 
 class ShopCreate(ShopBase):
     pass
 
+
 class Shop(ShopBase):
     id: int
+    # markets: Optional[List[Market]] = []
+    aisles: Optional[List[Aisle]] = None
+    marketId: Optional[int]
     # aisles_id: int
-    # market_id: int
 
     class Config:
         orm_mode = True
+
 
 #################################################
 

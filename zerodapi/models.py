@@ -37,16 +37,16 @@ class Shop(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
     description = Column(String, index=True)
-    type = Column(String, index=True)
+    shopType = Column(String, index=True)
 
-    # type_id = Column(Integer, ForeignKey("types.id"))
-    # type = relationship("Type", back_populates="items")
-
-    aisles = relationship("Aisle", back_populates="shops")
-
+    photo = Column(String, index=True, nullable=True)
     # photos_id = Column(Integer, ForeignKey("photos.id"))
     # photos = relationship("Photo", back_populates="shop")
-    photo = Column(String, index=True, nullable=True)
+
+    # type_id = Column(Integer, ForeignKey("types.id"))
+    # shopType = relationship("Type", back_populates="items")
+
+    aisles = relationship("Aisle", back_populates="shops")
 
     # market = Column(ForeignKey('markets.id'), nullable=True)
     market = Column(Integer, ForeignKey('markets.id'), nullable=True)
@@ -62,7 +62,9 @@ class Aisle(Base):
     shops_id = Column(Integer, ForeignKey('shops.id'))
     shops = relationship("Shop", back_populates="aisles")
 
-    products_id = Column(Integer, ForeignKey("products.id"))
+    # products_id = Column(Integer, ForeignKey("products.id"))
+
+    products = relationship("Product", back_populates="aisles")
     # products = relationship("Product", back_populates="aisles")
 
     # photos_id = Column(Integer, ForeignKey("photos.id"))
@@ -87,7 +89,8 @@ class Product(Base):
     # aisles_id = Column(Integer, ForeignKey("aisles.id"))
     # aisles = relationship("Aisle", back_populates="products")
 
-    aisles = relationship("Aisle")
+    aisles_id = Column(Integer, ForeignKey('aisles.id'))
+    aisles = relationship("Aisle", back_populates="products")
 
     tags = relationship("Tag", secondary=association_products_tags, back_populates="parents")
 
