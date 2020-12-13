@@ -33,6 +33,7 @@ class OpenAPItag(str, Enum):
     ORDER = "Order (commande)"
     DISTRICT = "District (quartier)"
     TAG = "Tag (tag)"
+    SEARCH = "Search (recherche)"
 
 
 def on_after_register(user: schemas.UserDB, request: Request):
@@ -85,11 +86,20 @@ def get_db():
 
 def save_upload_file(folder: str, upload_file: UploadFile) -> Path:
     try:
-        with os.path.join(folder, upload_file.filename).open("wb") as buffer:
+        # with os.path.join(folder, upload_file.filename).open("wb") as buffer:
+        with os.path.join(folder, upload_file.filename) as buffer:
             shutil.copyfileobj(upload_file.file, buffer)
     finally:
         upload_file.file.close()
     return Path(buffer.name)
+
+
+@app.get("/search/{search_word}", response_model=List[schemas.Shop], tags=[OpenAPItag.SEARCH])
+def search(search_word: str, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    db_search = crud.get_shops_by_name(db, search_word=search_word, skip=skip, limit=limit)
+    if db_search is None:
+        raise HTTPException(status_code=404, detail="Shop not found")
+    return db_search
 
 
 @app.get("/shop/", response_model=List[schemas.Shop], tags=[OpenAPItag.SHOP])
@@ -114,7 +124,7 @@ def read_shop(shop_id: int, db: Session = Depends(get_db)):
 @app.post("/shop/", response_model=schemas.Shop, tags=[OpenAPItag.SHOP])
 def create_shop(shop: schemas.ShopCreate, upload_file: UploadFile = File(...), db: Session = Depends(get_db)):
     # shop.photo = str(save_upload_file('./shop/', upload_file))
-    print(str(save_upload_file('./shop/', upload_file)))
+    save_upload_file('/Users/dorianayllon/Documents/Projects/hackathon/api/', upload_file)
     return crud.create_shop(db=db, shop=shop)
 
 

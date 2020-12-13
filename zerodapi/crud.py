@@ -47,6 +47,13 @@ def get_shops(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Shop).offset(skip).limit(limit).all()
 
 
+def get_shops_by_name(db: Session, search_word: str, skip: int = 0, limit: int = 100):
+    search = "%{}%".format(search_word)
+    # return db.query(models.Shop).filter(models.Shop.name.like(search)).first()
+    return db.query(models.Shop).filter(models.Shop.name.like(search)).offset(skip).limit(limit).all()
+    # return db.query(models.Shop).filter(models.Shop.name == search_word).offset(skip).limit(limit).all()
+
+
 def get_shop(db: Session, shop_id: int):
     return db.query(models.Shop).filter(models.Shop.id == shop_id).first()
 
@@ -54,6 +61,7 @@ def get_shop(db: Session, shop_id: int):
 def create_shop(db: Session, shop: schemas.ShopCreate):
     db_shop = models.Shop(**shop.dict())
     db.add(db_shop)
+    db_shop.photo = "path://image.png"
     db.commit()
     db.refresh(db_shop)
     return db_shop

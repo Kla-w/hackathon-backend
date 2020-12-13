@@ -195,7 +195,8 @@ class ShopBase(BaseModel):
     description: str
     # photos: Optional[List[Photo]] = []
     shopType: str
-    photo: Optional[str] = None
+    aisles: List[Aisle] = []
+    market: Optional[int] = None
 
 
 class ShopCreate(ShopBase):
@@ -205,9 +206,8 @@ class ShopCreate(ShopBase):
 class Shop(ShopBase):
     id: int
     # markets: Optional[List[Market]] = []
-    aisles: Optional[List[Aisle]] = None
-    marketId: Optional[int]
     # aisles_id: int
+    photo: Optional[str] = None
 
     class Config:
         orm_mode = True
